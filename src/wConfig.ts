@@ -1,12 +1,13 @@
-import helloRouter from "./wRouters/helloRouter";
+import userRouter from "./wRouters/wUserRouter";
 
 const globalMiddlewares: any[] = [
     // Add your global middlewares here
 ];
 
-const routers = [
+const routers: any[] = [
     // Add your routers here
-    helloRouter
+    userRouter
+    
 ];
 
 export {globalMiddlewares, routers};

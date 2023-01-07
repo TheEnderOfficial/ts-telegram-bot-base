@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import { Telegraf, Context as TContext, Scenes } from "telegraf";
 
 interface Session extends Scenes.WizardSession {
@@ -6,6 +7,8 @@ interface Session extends Scenes.WizardSession {
 
 interface Context extends TContext {
   // Add your own context properties here
+  user: User;
+
   scene: Scenes.SceneContextScene<Context, Scenes.WizardSessionData>;
   wizard: Scenes.WizardContextWizard<Context>;
   session: Session;
