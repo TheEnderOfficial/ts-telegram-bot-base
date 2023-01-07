@@ -11,5 +11,7 @@ Telegraf.js
 Prisma
 ```
 
+Для webhook используется ngrok если вы против в .env укажите NGROK=0
+
 ## EN:
 ### TODO: Make english translatation
