@@ -2,7 +2,10 @@ import "dotenv/config";
 import ngrok from "ngrok";
 import { createServer } from "http";
 import express from "express";
-import { Telegraf } from "telegraf";
+import { Telegraf, Scenes, session } from "telegraf";
+import { Context } from "./bTypes";
+import { routers, globalMiddlewares } from "./wConfig";
+import { handlers, scenes } from "./bConfig";
 
 async function main() {
     if (!process.env.BOT_TOKEN) {
@@ -30,13 +33,22 @@ async function main() {
     })
     
     const app = express();
-    const bot = new Telegraf(BOT_TOKEN);
+    const bot = new Telegraf<Context>(BOT_TOKEN);
     const server = createServer(app);
+    const stage = new Scenes.Stage<Context>([
+        ...scenes
+    ]);
+
+    bot.use(session());
+    bot.use(stage.middleware());
+
+    handlers.map(handler => handler(bot))
     
     bot.telegram.setWebhook(`${url}/bot${BOT_TOKEN}`);
     app.use(bot.webhookCallback(`/bot${BOT_TOKEN}`));
 
-    
+    globalMiddlewares.map(middleware => app.use(middleware));
+    routers.map(router => app.use(router));
 
     server.listen(PORT, () => {
         console.log(`Server listening on port ${PORT}`);
