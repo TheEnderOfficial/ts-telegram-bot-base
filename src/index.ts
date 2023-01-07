@@ -10,6 +10,7 @@ import {
   scenes,
   globalMiddlewares as bGlobalMiddlewares,
 } from "./bConfig";
+import { prisma } from "./db";
 
 async function main() {
   if (!process.env.BOT_TOKEN) {
@@ -52,6 +53,8 @@ async function main() {
 
   globalMiddlewares.map((middleware) => app.use(middleware));
   routers.map((router) => app.use(router));
+
+  await prisma.$connect();
 
   server.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
