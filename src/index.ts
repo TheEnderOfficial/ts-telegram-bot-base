@@ -42,21 +42,20 @@ async function main() {
   const server = createServer(app);
   const stage = new Scenes.Stage<Context>([...scenes]);
 
-  bot.use(session());
-  bot.use(stage.middleware());
-
-  handlers.map((handler) => handler(bot));
-
   bot.telegram.setWebhook(`${url}/bot${BOT_TOKEN}`);
   app.use(bot.webhookCallback(`/bot${BOT_TOKEN}`));
-  bGlobalMiddlewares.map((middleware) => bot.use(middleware));
 
   globalMiddlewares.map((middleware) => app.use(middleware));
   routers.map((router) => app.use(router));
 
-  await prisma.$connect();
+  bot.use(session());
+  bot.use(stage.middleware());
 
-  server.listen(PORT, () => {
+  bGlobalMiddlewares.map((middleware) => bot.use(middleware));
+  handlers.map((handler) => handler(bot));
+
+  server.listen(PORT, async () => {
+    await prisma.$connect();
     console.log(`Server listening on port ${PORT}`);
     console.log(`Ngrok URL: ${url}`);
   });

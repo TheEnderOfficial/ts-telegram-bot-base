@@ -15,4 +15,5 @@ model User {
   telegramId Int @unique
   name String
   username String?
+  balance Float @default(0)
 }

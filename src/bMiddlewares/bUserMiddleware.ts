@@ -7,6 +7,7 @@ const userMiddleware: MiddlewareFn<Context> = async (ctx, next) => {
     if (!user) return next();
 
     ctx.user = await UserService.findOrCreateUser(user);
+    await next();
 };
 
 export default userMiddleware;
