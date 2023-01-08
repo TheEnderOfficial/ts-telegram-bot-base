@@ -2,9 +2,10 @@
 
 ## ВАЖНО НЕ ЗАБУДЬТЕ НАСТРОИТЬ REPLICA SET в MONGODB
 
-## Что значит b, w в начале файлов
+## Что значит b, w, p в начале файлов
 
 Это разделение на типы w - Web, b - Bot, т.е `bMiddlewares` это middlewares для бота а `wMiddlewares` это middlewares для web
+p - Payments (платежи)
 
 ## Где взять типы Context, Bot
 

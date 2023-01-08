@@ -1,8 +1,10 @@
-import { User } from "@prisma/client";
+import { PaymentProvider, User } from "@prisma/client";
 import { Telegraf, Context as TContext, Scenes } from "telegraf";
 
 interface Session extends Scenes.WizardSession {
   // Add your own session properties here
+  __topupScene_amount: number;
+  __topupScene_provider: PaymentProvider;
 }
 
 interface Context extends TContext {

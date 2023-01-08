@@ -12,6 +12,17 @@ class UserService {
     });
   }
 
+  public static async chargeBalance(user: User, delta: number) {
+    return await prisma.user.update({
+      where: {
+        id: user.id
+      },
+      data: {
+        balance: user.balance + delta
+      }
+    })
+  }
+
   public static async findOrCreateUser(tgUser: TelegramUser): Promise<User> {
     return await prisma.user.upsert({
       where: {

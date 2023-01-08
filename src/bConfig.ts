@@ -2,13 +2,15 @@ import {Scenes, MiddlewareFn} from "telegraf"
 import mainHandlers from "./bHandlers/mainHandler";
 import userMiddleware from "./bMiddlewares/bUserMiddleware";
 import { profileScene } from "./bScenes/profileScene";
+import { topupScene } from "./bScenes/topupScene";
 import { Bot, Context } from "./bTypes";
 
 type Handler = (bot: Bot) => void;
 
 const scenes: Scenes.BaseScene<Context>[] = [
     // Add your scenes here
-    profileScene
+    profileScene,
+    topupScene
 ];
 const globalMiddlewares: MiddlewareFn<Context>[] = [
     // Add your global middlewares here
