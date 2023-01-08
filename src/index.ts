@@ -10,6 +10,7 @@ import {
   scenes,
   globalMiddlewares as bGlobalMiddlewares,
 } from "./bConfig";
+import setupQiwi from "./pQiwi"
 import { prisma } from "./db";
 
 async function main() {
@@ -41,6 +42,8 @@ async function main() {
   const bot = new Telegraf<Context>(BOT_TOKEN);
   const server = createServer(app);
   const stage = new Scenes.Stage<Context>([...scenes]);
+
+  await setupQiwi(app);
 
   bot.telegram.setWebhook(`${url}/bot${BOT_TOKEN}`);
   app.use(bot.webhookCallback(`/bot${BOT_TOKEN}`));
