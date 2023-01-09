@@ -1,4 +1,4 @@
-import userRouter from "./wRouters/wUserRouter";
+import userRouter from "./users/wUserRouter";
 
 const globalMiddlewares: any[] = [
     // Add your global middlewares here

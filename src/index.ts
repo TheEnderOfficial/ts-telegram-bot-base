@@ -3,15 +3,15 @@ import ngrok from "ngrok";
 import { createServer } from "http";
 import express from "express";
 import { Telegraf, Scenes, session } from "telegraf";
-import { Context } from "./bTypes";
+import { Context } from "./bot/bTypes";
 import { routers, globalMiddlewares } from "./wConfig";
 import {
   handlers,
   scenes,
   globalMiddlewares as bGlobalMiddlewares,
-} from "./bConfig";
-import setupQiwi from "./pQiwi"
+} from "./bot/bConfig";
 import { prisma } from "./db";
+import { config as paymentConfig } from "./paymentSystem/pConfig";
 
 async function main() {
   if (!process.env.BOT_TOKEN) {
@@ -43,7 +43,9 @@ async function main() {
   const server = createServer(app);
   const stage = new Scenes.Stage<Context>([...scenes]);
 
-  await setupQiwi(app);
+  // setup payments here
+  paymentConfig.providers.map((provider) => provider.setup(app, bot));
+  // end setup payments
 
   bot.telegram.setWebhook(`${url}/bot${BOT_TOKEN}`);
   app.use(bot.webhookCallback(`/bot${BOT_TOKEN}`));

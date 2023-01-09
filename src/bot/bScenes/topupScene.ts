@@ -3,8 +3,8 @@ import { Composer, Markup, Scenes } from "telegraf";
 import { startHandler } from "../bHandlers/mainHandler";
 import userMiddleware from "../bMiddlewares/bUserMiddleware";
 import { Context } from "../bTypes";
-import { PAYMENT_PROVIDERS, PAYMENT_PROVIDERS_STR } from "../pConfig";
-import PaymentService from "../services/paymentService";
+import { config, config as paymentConfig} from "../../paymentSystem/pConfig";
+import PaymentService from "../../paymentSystem/paymentService";
 
 const CANCEL_BUTTON = "❌ Cancel";
 const CANCEL_BUTTON_CALLBACK = "cancel";
@@ -16,9 +16,9 @@ providerSelectComposer.action(CANCEL_BUTTON_CALLBACK, async (ctx) => {
   return await startHandler(ctx);
 });
 
-PAYMENT_PROVIDERS.forEach((provider) => {
-  providerSelectComposer.action(provider, async (ctx) => {
-    ctx.session.__topupScene_provider = provider;
+paymentConfig.providers.forEach((provider) => {
+  providerSelectComposer.action(provider.name, async (ctx) => {
+    ctx.session.__topupScene_provider = provider.name;
     ctx.wizard.next();
     await ctx.reply("<Enter payment amount text, ./src/bScenes/topupScene.ts>", Markup.removeKeyboard());
 
@@ -49,14 +49,14 @@ amountSelectComposer.on("text", async ctx => {
         ctx.session.__topupScene_amount = number;
         console.log(ctx.user)
 
-        await PaymentService.createPayment(ctx.user, ctx.session.__topupScene_amount, ctx.session.__topupScene_provider);
+        await PaymentService.create(ctx.session.__topupScene_amount, ctx.user, ctx.session.__topupScene_provider);
         
     }
 })
 
 const keyboard = Markup.inlineKeyboard([
-  ...PAYMENT_PROVIDERS.map((i, j) =>
-    Markup.button.callback(PAYMENT_PROVIDERS_STR[j], i)
+  ...config.providers.map((i, j) =>
+    Markup.button.callback(i.displayName, i.name)
   ).map((i) => [i]),
   [Markup.button.callback(CANCEL_BUTTON, CANCEL_BUTTON_CALLBACK)],
 ]);

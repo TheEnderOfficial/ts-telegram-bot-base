@@ -1,10 +1,10 @@
 import { User } from "@prisma/client";
 import { User as TelegramUser } from "telegraf/typings/core/types/typegram";
-import { Context } from "../bTypes";
+import { Context } from "../bot/bTypes";
 import { prisma } from "../db";
 
 class UserService {
-  public static async findUser(ctx: Context, telegramId: number): Promise<User | null> {
+  public static async find(ctx: Context, telegramId: number): Promise<User | null> {
     return await prisma.user.findFirst({
       where: {
         telegramId,
@@ -23,7 +23,7 @@ class UserService {
     })
   }
 
-  public static async findOrCreateUser(tgUser: TelegramUser): Promise<User> {
+  public static async findOrCreate(tgUser: TelegramUser): Promise<User> {
     return await prisma.user.upsert({
       where: {
         telegramId: tgUser.id,
@@ -37,11 +37,11 @@ class UserService {
     });
   }
 
-  public static async getAllUsers(): Promise<User[]> {
+  public static async findAll(): Promise<User[]> {
     return await prisma.user.findMany();
   }
 
-  public static async getUserById(id: string): Promise<User | null> {
+  public static async findById(id: string): Promise<User | null> {
     return await prisma.user.findFirst({
       where: {
         id,
@@ -49,7 +49,7 @@ class UserService {
     });
   }
 
-  public static async updateUser(id: string, data: Partial<User>): Promise<User> {
+  public static async update(id: string, data: Partial<User>): Promise<User> {
     return await prisma.user.update({
       where: {
         id,
@@ -58,7 +58,7 @@ class UserService {
     });
   }
 
-  public static async deleteUser(id: string): Promise<User> {
+  public static async delete(id: string): Promise<User> {
     return await prisma.user.delete({
       where: {
         id,
@@ -66,7 +66,7 @@ class UserService {
     });
   }
 
-  public static async deleteAllUsers(): Promise<void> { 
+  public static async deleteAll(): Promise<void> { 
     await prisma.user.deleteMany();
   }
 }
