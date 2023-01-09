@@ -1,19 +1,24 @@
 import { Payment, PaymentProvider, PaymentStatus } from "@prisma/client";
-import { IPaymentProvider } from "../pTypes";
+import { IPaymentProvider, Message } from "../pTypes";
 import { Express } from "express";
 import { Bot } from "../../bot/bTypes";
 
 export class DeveloperProvider implements IPaymentProvider {
   name = PaymentProvider.DEVELOPER;
-  displayName = "💻 Developer";
+  displayName = "💻 Режим разработчика";
 
   async processCreate(payment: Payment): Promise<Payment> {
-    console.log("Devloper payment created", { payment });
     payment.status = PaymentStatus.SUCCESS;
     return payment;
   }
   async check(payment: Payment): Promise<PaymentStatus> {
     return PaymentStatus.SUCCESS;
+  }
+  async formatMessage(payment: Payment){
+    return {
+      text: "Оплата через режим разработчика",
+      keyboard: null
+    }
   }
 
   setup(app: Express, bot: Bot): void {}

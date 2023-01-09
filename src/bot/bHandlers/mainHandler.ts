@@ -1,14 +1,14 @@
 import { Telegraf, Markup } from "telegraf";
 import { Bot, Context } from "../bTypes";
 
-const PROFILE = "📝 Profile";
+const PROFILE = "📝 Профиль";
 let mainMenuMarkup = Markup.keyboard([[PROFILE]])
   .resize()
   .oneTime();
 
 export const startHandler = (ctx: Context) =>
   ctx.reply(
-    `<Text for start command (./src/bHandlers/mainHandler.ts)>`,
+    `Привет, ${ctx.user?.name ?? "гость"}!`,
     mainMenuMarkup
   );
 

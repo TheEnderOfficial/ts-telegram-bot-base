@@ -1,5 +1,6 @@
 import {Scenes, MiddlewareFn} from "telegraf"
 import mainHandlers from "./bHandlers/mainHandler";
+import paymentHandlers from "./bHandlers/paymentHandler";
 import userMiddleware from "./bMiddlewares/userMiddleware";
 import { profileScene } from "./bScenes/profileScene";
 import { topupScene } from "./bScenes/topupScene";
@@ -17,7 +18,8 @@ const globalMiddlewares: MiddlewareFn<Context>[] = [
     userMiddleware
 ];
 const handlers: Handler[] = [
-    mainHandlers
+    mainHandlers,
+    paymentHandlers
 ];
 
 export {scenes, globalMiddlewares, handlers};

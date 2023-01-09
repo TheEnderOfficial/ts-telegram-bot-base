@@ -4,8 +4,8 @@ import { Context } from "../bTypes";
 
 export const profileScene = new Scenes.BaseScene<Context>("profile");
 
-const TOPUP_BUTTON = "💳 Topup";
-const BACK_BUTTON =  "🔙 Back";
+const TOPUP_BUTTON = "💳 Пополнить";
+const BACK_BUTTON =  "🔙 Назад";
 
 const PROFILE_KEYBOARD = Markup.keyboard(
     [
@@ -14,7 +14,9 @@ const PROFILE_KEYBOARD = Markup.keyboard(
 ).resize().oneTime()
 
 profileScene.enter(async (ctx) => {
-    await ctx.reply(`<Text for profile scene (./src/bScenes/profileScene.ts)>\n${JSON.stringify(ctx.user)}`, PROFILE_KEYBOARD);
+    await ctx.reply(`🆔 Telegram ID: ${ctx.user.telegramId}
+📧 Имя: ${ctx.user.name}
+💵 Баланс: ${ctx.user.balance.toLocaleString("ru", {style: "currency", currency: "RUB"})}`, PROFILE_KEYBOARD);
 });
 
 profileScene.hears(TOPUP_BUTTON, (ctx) => ctx.scene.enter("topup"));

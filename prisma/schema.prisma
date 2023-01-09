@@ -37,4 +37,6 @@ model Payment {
   amount   Float
   provider PaymentProvider
   status PaymentStatus
+  qiwiBillId String?
+  qiwiPayUrl String?
 }

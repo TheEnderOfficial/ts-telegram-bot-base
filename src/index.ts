@@ -12,6 +12,7 @@ import {
 } from "./bot/bConfig";
 import { prisma } from "./db";
 import { config as paymentConfig } from "./paymentSystem/pConfig";
+import PaymentService from "./paymentSystem/paymentService";
 
 async function main() {
   if (!process.env.BOT_TOKEN) {
@@ -42,6 +43,8 @@ async function main() {
   const bot = new Telegraf<Context>(BOT_TOKEN);
   const server = createServer(app);
   const stage = new Scenes.Stage<Context>([...scenes]);
+
+  PaymentService.bot = bot;
 
   // setup payments here
   paymentConfig.providers.map((provider) => provider.setup(app, bot));
