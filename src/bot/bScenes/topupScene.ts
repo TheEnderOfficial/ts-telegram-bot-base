@@ -1,7 +1,7 @@
 import { PaymentProvider } from "@prisma/client";
 import { Composer, Markup, Scenes } from "telegraf";
 import { startHandler } from "../bHandlers/mainHandler";
-import userMiddleware from "../bMiddlewares/bUserMiddleware";
+import userMiddleware from "../bMiddlewares/userMiddleware";
 import { Context } from "../bTypes";
 import { config, config as paymentConfig} from "../../paymentSystem/pConfig";
 import PaymentService from "../../paymentSystem/paymentService";
@@ -50,7 +50,11 @@ amountSelectComposer.on("text", async ctx => {
         console.log(ctx.user)
 
         await PaymentService.create(ctx.session.__topupScene_amount, ctx.user, ctx.session.__topupScene_provider);
-        
+
+        await ctx.reply("<Payment created text, ./src/bScenes/topupScene.ts>");
+
+        await ctx.scene.leave();
+        return await startHandler(ctx);
     }
 })
 
@@ -64,5 +68,4 @@ const keyboard = Markup.inlineKeyboard([
 export const topupScene = new Scenes.WizardScene<Context>(
   "topup",
   providerSelectComposer,
-  amountSelectComposer
-);
+  amountSelectComposer);

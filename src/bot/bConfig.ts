@@ -1,6 +1,6 @@
 import {Scenes, MiddlewareFn} from "telegraf"
 import mainHandlers from "./bHandlers/mainHandler";
-import userMiddleware from "./bMiddlewares/bUserMiddleware";
+import userMiddleware from "./bMiddlewares/userMiddleware";
 import { profileScene } from "./bScenes/profileScene";
 import { topupScene } from "./bScenes/topupScene";
 import { Bot, Context } from "./bTypes";
