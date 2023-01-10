@@ -12,7 +12,7 @@ export interface IPaymentProvider {
 
     processCreate(payment: Payment): Promise<Payment>;
     check(payment: Payment): Promise<PaymentStatus>;
-    setup(app: Express, bot: Bot): Promise<void> | void;
+    setup(app: Express, bot: Bot, ngrokAddr: string): Promise<void> | void;
     formatMessage(payment: Payment): Message | Promise<Message>;
 }
 

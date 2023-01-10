@@ -21,5 +21,5 @@ export class DeveloperProvider implements IPaymentProvider {
     }
   }
 
-  setup(app: Express, bot: Bot): void {}
+  setup(app: Express, bot: Bot, ngrokAddr: string): void {}
 }

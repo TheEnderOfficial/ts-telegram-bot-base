@@ -7,6 +7,7 @@ import { P2p } from "qiwi-sdk";
 import { randomUUID } from "crypto";
 import { prisma } from "../../db";
 import { Markup } from "telegraf";
+import PaymentService from "../paymentService";
 
 export class QIWIProvider implements IPaymentProvider {
   name = PaymentProvider.QIWI;
@@ -77,13 +78,8 @@ export class QIWIProvider implements IPaymentProvider {
     if (!this.p2p || !this.wallet) throw new Error("Not setup");
     if (!payment.qiwiBillId) throw new Error("No bill id");
 
-    let bill = await this.getPaymentByBillID(payment.qiwiBillId);
-
-    if (!bill) throw new Error("No bill");
-    if (!bill.qiwiBillId) throw new Error("No bill id");
-
     let newStatus: PaymentStatus = PaymentStatus.PENDING;
-    let qwStatus = await this.p2p.bills.getStatus(bill.qiwiBillId);
+    let qwStatus = await this.p2p.bills.getStatus(payment.qiwiBillId);
     if (qwStatus.status.value === BillStatus.PAID) {
       newStatus = PaymentStatus.SUCCESS;
     } else if (qwStatus.status.value == "WAITING") {
@@ -94,35 +90,41 @@ export class QIWIProvider implements IPaymentProvider {
 
     await prisma.payment.update({
       where: {
-        id: bill.id,
+        id: payment.id,
       },
       data: {
         status: newStatus,
       },
     });
-
-    return bill.status;
+    console.log({
+      status: newStatus,
+      payment
+    })
+    return newStatus;
   }
 
-  setup(app: Express, bot: Bot): void {
+  async setup(app: Express, bot: Bot, ngrokAddr: string): Promise<void> {
     if (!process.env.QIWI_TOKEN) throw new Error("No token");
     if (!process.env.QIWI_P2P_SECRET) throw new Error("No secret");
     if (!process.env.QIWI_P2P_PUBLIC) throw new Error("No public");
     this.wallet = Wallet.create(process.env.QIWI_TOKEN);
-    this.p2p = P2p.env(
-      process.env.QIWI_P2P_SECRET,
-      process.env.QIWI_P2P_PUBLIC
+    let keys = await this.wallet.bills.createP2PKeyPair("TsTelegramBotBase-" + randomUUID(), ngrokAddr + "/webhook/qiwi")
+    this.p2p = P2p.create(
+      keys.secretKey,
+      keys.publicKey
     );
     this.bot = bot;
     
     app.post(
       "/webhook/qiwi",
-      this.p2p.notificationMiddleware({}, async (req) => {
+      this.p2p.notificationMiddleware({}, (req, res) => {
+       (async () => {
         let { billId, amount } = req.body;
 
         let payment = await this.getPaymentByBillID(billId);
         if (!payment) throw new Error("No payment");
-        let status = await this.check(payment);
+        await PaymentService.check(payment.provider, payment);
+       })().then(r => res.end())
       })
     );
   }

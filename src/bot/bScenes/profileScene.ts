@@ -6,10 +6,16 @@ export const profileScene = new Scenes.BaseScene<Context>("profile");
 
 const TOPUP_BUTTON = "💳 Пополнить";
 const BACK_BUTTON =  "🔙 Назад";
+const LIKN_SETTINGS_BUTTON = "🌐 Настройки веб-аккаунта";
 
 const PROFILE_KEYBOARD = Markup.keyboard(
     [
-        TOPUP_BUTTON, BACK_BUTTON
+        [
+            TOPUP_BUTTON, BACK_BUTTON
+        ],
+        [
+            LIKN_SETTINGS_BUTTON
+        ]
     ]
 ).resize().oneTime()
 
@@ -20,6 +26,7 @@ profileScene.enter(async (ctx) => {
 });
 
 profileScene.hears(TOPUP_BUTTON, (ctx) => ctx.scene.enter("topup"));
+profileScene.hears(LIKN_SETTINGS_BUTTON, (ctx) => ctx.scene.enter("linkSettings"));
 profileScene.hears(BACK_BUTTON, async (ctx) => {
     await ctx.scene.leave()
     return startHandler(ctx)

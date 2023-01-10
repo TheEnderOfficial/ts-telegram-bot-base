@@ -10,6 +10,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model WebUser {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  username String
+  password String
+  tgUser   User?   @relation(fields: [tgUserId], references: [id])
+  tgUserId String? @unique @db.ObjectId
+  role UserRole @default(USER)
+}
+
 model User {
   id         String    @id @default(auto()) @map("_id") @db.ObjectId
   telegramId Int       @unique
@@ -17,6 +31,7 @@ model User {
   username   String?
   balance    Float     @default(0)
   Payment    Payment[]
+  WebUser    WebUser?
 }
 
 enum PaymentProvider {
@@ -31,12 +46,12 @@ enum PaymentStatus {
 }
 
 model Payment {
-  id       String          @id @default(auto()) @map("_id") @db.ObjectId
-  userId   String          @map("user_id") @db.ObjectId
-  user     User            @relation(fields: [userId], references: [id])
-  amount   Float
-  provider PaymentProvider
-  status PaymentStatus
+  id         String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String          @map("user_id") @db.ObjectId
+  user       User            @relation(fields: [userId], references: [id])
+  amount     Float
+  provider   PaymentProvider
+  status     PaymentStatus
   qiwiBillId String?
   qiwiPayUrl String?
 }

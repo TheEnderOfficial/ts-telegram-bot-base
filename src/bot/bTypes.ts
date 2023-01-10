@@ -14,6 +14,7 @@ interface Context extends TContext {
   scene: Scenes.SceneContextScene<Context, Scenes.WizardSessionData>;
   wizard: Scenes.WizardContextWizard<Context>;
   session: Session;
+  startPayload: string;
 }
 
 type Bot = Telegraf<Context>;

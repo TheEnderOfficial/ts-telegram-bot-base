@@ -55,7 +55,7 @@ class PaymentService {
 
     await this.bot.telegram.sendMessage(
       user.telegramId,
-      msg.text,
+      msg.text + `\n\nДля перехода в меню отправьте любое сообщение`,
       msg.keyboard ?? undefined
     );
   }

@@ -55,8 +55,7 @@ amountSelectComposer.on("text", async (ctx) => {
       ctx.session.__topupScene_provider
     );
 
-    await ctx.scene.leave();
-    return await startHandler(ctx);
+    return await ctx.wizard.next();
   }
 });
 
@@ -70,5 +69,8 @@ const keyboard = Markup.inlineKeyboard([
 export const topupScene = new Scenes.WizardScene<Context>(
   "topup",
   providerSelectComposer,
-  amountSelectComposer
+  amountSelectComposer,
+  async ctx => {
+    await ctx.scene.leave();
+  }
 );

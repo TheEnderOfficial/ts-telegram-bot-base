@@ -13,6 +13,8 @@ import {
 import { prisma } from "./db";
 import { config as paymentConfig } from "./paymentSystem/pConfig";
 import PaymentService from "./paymentSystem/paymentService";
+import cors from "cors";
+import botMiddleware from "./wMiddlewares/wBotMiddleware";
 
 async function main() {
   if (!process.env.BOT_TOKEN) {
@@ -44,22 +46,26 @@ async function main() {
   const server = createServer(app);
   const stage = new Scenes.Stage<Context>([...scenes]);
 
-  PaymentService.bot = bot;
+  app.use(express.json());
+  app.use(cors());
+  app.use(botMiddleware(bot));
 
   // setup payments here
-  paymentConfig.providers.map((provider) => provider.setup(app, bot));
+  PaymentService.bot = bot;
+
+  paymentConfig.providers.map((provider) => provider.setup(app, bot, url));
   // end setup payments
 
   bot.telegram.setWebhook(`${url}/bot${BOT_TOKEN}`);
   app.use(bot.webhookCallback(`/bot${BOT_TOKEN}`));
 
   globalMiddlewares.map((middleware) => app.use(middleware));
-  routers.map((router) => app.use(router));
+  routers.map((router) => app.use(router.path, router.router));
 
   bot.use(session());
+  bGlobalMiddlewares.map((middleware) => bot.use(middleware));
   bot.use(stage.middleware());
 
-  bGlobalMiddlewares.map((middleware) => bot.use(middleware));
   handlers.map((handler) => handler(bot));
 
   server.listen(PORT, async () => {
